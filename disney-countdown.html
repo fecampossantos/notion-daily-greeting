@@ -104,6 +104,19 @@
     const oneMonth = 30 * oneDay;
     const oneYear = 12 * oneMonth;
 
+    // does it once
+    const today = new Date().getTime();
+
+    const diff = myDate - today;
+
+    const years = Math.floor(diff / oneYear);
+    const months = Math.floor((diff % oneYear) / oneMonth);
+    const days = Math.floor((diff % oneMonth) / oneDay);
+
+    document.getElementById("years").innerHTML = years;
+    document.getElementById("months").innerHTML = months;
+    document.getElementById("days").innerHTML = days;
+
     let timer = setInterval(function () {
       const today = new Date().getTime();
 
@@ -116,6 +129,6 @@
       document.getElementById("years").innerHTML = years;
       document.getElementById("months").innerHTML = months;
       document.getElementById("days").innerHTML = days;
-    }, oneHour * 12);
+    }, oneHour);
   </script>
 </html>
