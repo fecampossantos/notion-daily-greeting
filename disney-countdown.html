@@ -99,13 +99,12 @@
   <script>
     const year = new Date().getFullYear();
     const myDate = new Date("May 04, 2024 00:00:00");
+    const oneHour = 60 * 60 * 1000;
+    const oneDay = 24 * oneHour;
+    const oneMonth = 30 * oneDay;
+    const oneYear = 12 * oneMonth;
 
     let timer = setInterval(function () {
-      const oneHour = 60 * 60 * 1000;
-      const oneDay = 24 * oneHour;
-      const oneMonth = 30 * oneDay;
-      const oneYear = 12 * oneMonth;
-
       const today = new Date().getTime();
 
       const diff = myDate - today;
@@ -117,6 +116,6 @@
       document.getElementById("years").innerHTML = years;
       document.getElementById("months").innerHTML = months;
       document.getElementById("days").innerHTML = days;
-    }, 1);
+    }, oneHour * 12);
   </script>
 </html>
