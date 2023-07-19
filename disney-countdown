@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- based on https://blog.shorouk.dev/notion-widgets-gallery/notion-widget-count-down/ -->
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Disney Countdown</title>
+    <style>
+      body {
+        background-color: transparent;
+        width: 100vw;
+      }
+
+      .wrapper {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-direction: row;
+        max-width: 600px;
+        color: #eeeeee;
+        text-align: center;
+        text-transform: uppercase;
+        font-family: "Lato", sans-serif;
+        font-size: 0.7em;
+        letter-spacing: 5px;
+        margin: auto;
+
+        @media screen and (max-width: 440px) {
+          font-size: 0.5em;
+        }
+      }
+
+      .years,
+      .months,
+      .days {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        width: 80px;
+        height: 80px;
+        padding: 20px;
+
+        margin: 5px;
+
+        color: #37352f;
+        background-color: #fff;
+
+        border: 3px solid #37352f;
+        border-radius: 5px;
+
+        box-shadow: 2px 2px 1px 0px #37352f;
+
+        @media screen and (max-width: 440px) {
+          width: 60px;
+          height: 60px;
+          padding: 10px;
+        }
+      }
+
+      .numbers {
+        font-family: "Inconsolata", sans-serif;
+        font-weight: 700;
+        color: #183059;
+        font-size: 4em;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="years">
+        <div id="years" class="numbers"></div>
+        years
+      </div>
+      <div class="months">
+        <div id="months" class="numbers"></div>
+        months
+      </div>
+      <div class="days">
+        <div id="days" class="numbers"></div>
+        days
+      </div>
+    </div>
+  </body>
+  <script>
+    const year = new Date().getFullYear();
+    const myDate = new Date("May 04, 2024 00:00:00");
+
+    let timer = setInterval(function () {
+      const oneHour = 60 * 60 * 1000;
+      const oneDay = 24 * oneHour;
+      const oneMonth = 30 * oneDay;
+      const oneYear = 12 * oneMonth;
+
+      const today = new Date().getTime();
+
+      const diff = myDate - today;
+
+      const years = Math.floor(diff / oneYear);
+      const months = Math.floor((diff % oneYear) / oneMonth);
+      const days = Math.floor((diff % oneMonth) / oneDay);
+
+      document.getElementById("years").innerHTML = years;
+      document.getElementById("months").innerHTML = months;
+      document.getElementById("days").innerHTML = days;
+    }, 1);
+  </script>
+</html>
