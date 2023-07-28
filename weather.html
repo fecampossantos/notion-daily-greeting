@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Forecast Widget</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      .weather-widget {
+        background-color: #fff;
+        display: flex;
+        flex-direction: row;
+      }
+
+      .weather-card {
+        border: 3px solid #37352f;
+        border-radius: 5px;
+        box-shadow: 2px 2px 1px 0px #37352f;
+
+        padding: 10px;
+        margin: 10px;
+
+        flex: 1;
+
+        max-width: 200px;
+        max-height: 200px;
+      }
+
+      .weather-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 5px;
+
+        h2 {
+          margin: 0;
+        }
+
+        img {
+          width: 30px;
+          height: 30px;
+          margin-right: 5px;
+        }
+      }
+
+      .weather-card-content {
+        display: flex;
+        align-items: center;
+
+        img {
+          width: 50px;
+          height: 50px;
+          margin-right: 10px;
+        }
+
+        p {
+          margin: 0;
+        }
+      }
+
+      .weather-card-temp {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="weather-widget" id="weatherWidget">
+      <!-- Weather forecast content will be dynamically added here -->
+    </div>
+    <script>
+      const weatherAPIKey = "efe37700b98847d0bee153906232407"; // Replace with your weather API key
+      getLocation();
+      //   Latitude and Longitude (Decimal degree) e.g: q=48.8567,2.3508
+
+      // Fetch weather data from the API
+
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(fetchWeatherData, showError);
+        } else {
+          const locationInfo = document.getElementById("locationInfo");
+          locationInfo.innerHTML =
+            "Geolocation is not supported by this browser.";
+        }
+      }
+
+      function showPosition(position) {
+        console.log(latitude);
+        console.log(longitude);
+      }
+
+      function showError(error) {
+        const locationInfo = document.getElementById("locationInfo");
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            locationInfo.innerHTML = "User denied the request for Geolocation.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            locationInfo.innerHTML = "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            locationInfo.innerHTML =
+              "The request to get user location timed out.";
+            break;
+          case error.UNKNOWN_ERROR:
+            locationInfo.innerHTML = "An unknown error occurred.";
+            break;
+        }
+      }
+
+      function fetchWeatherData(position) {
+        const latLong = [
+          position.coords.latitude,
+          position.coords.longitude,
+        ].join(",");
+        const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=${weatherAPIKey}&q=${latLong}&days=4`;
+
+        fetch(apiUrl)
+          .then((response) => response.json())
+          .then((data) => renderWeatherData(data))
+          .catch((error) =>
+            console.error("Error fetching weather data:", error)
+          );
+      }
+
+      function renderWeatherData(data) {
+        const weatherWidget = document.getElementById("weatherWidget");
+
+        // Clear previous content
+        weatherWidget.innerHTML = "";
+
+        // Display location and current date
+        const locationName = data.location.name;
+        const currentDate = new Date(
+          data.location.localtime
+        ).toLocaleDateString();
+        const title = document.createElement("h2");
+
+        // Display weather forecast for the next 3 days
+        const forecastDays = data.forecast.forecastday.slice(1, 4); // Exclude current day
+        forecastDays.forEach((day) => {
+          const forecastCard = createWeatherCard(day);
+          weatherWidget.appendChild(forecastCard);
+        });
+      }
+
+      function createWeatherCard(dayData) {
+        const weatherCard = document.createElement("div");
+        weatherCard.classList.add("weather-card");
+
+        // Weather icon
+        const iconUrl = `https:${dayData.day.condition.icon}`;
+        const iconImg = document.createElement("img");
+        iconImg.src = iconUrl;
+
+        // Date
+        const date = new Date(dayData.date).toLocaleDateString();
+
+        // Max and min temperatures
+        const maxTempC = dayData.day.maxtemp_c;
+        const minTempC = dayData.day.mintemp_c;
+
+        // Create card header
+        const cardHeader = document.createElement("div");
+        cardHeader.classList.add("weather-card-header");
+        const headerText = document.createElement("h2");
+        headerText.textContent = date;
+        const description = document.createElement("span");
+        description.innerText = dayData.day.condition.text
+        cardHeader.appendChild(headerText);
+        cardHeader.appendChild(iconImg);
+        cardHeader.appendChild(description);
+
+        // Create card content
+        const cardContent = document.createElement("div");
+        cardContent.classList.add("weather-card-content");
+
+        const maxTempDiv = document.createElement("div");
+        maxTempDiv.classList.add("weather-card-temp");
+        const maxTempImg = document.createElement("img");
+        maxTempImg.src = "https://super.so/icon/dark/chevron-down.svg";
+        const maxTempText = document.createElement("p");
+        maxTempText.textContent = `${minTempC}°C`;
+        maxTempDiv.appendChild(maxTempImg);
+        maxTempDiv.appendChild(maxTempText);
+
+        const minTempDiv = document.createElement("div");
+        minTempDiv.classList.add("weather-card-temp");
+        const minTempImg = document.createElement("img");
+        minTempImg.src = "https://super.so/icon/dark/chevron-up.svg";
+        const minTempText = document.createElement("p");
+        minTempText.textContent = `${maxTempC}°C`;
+        minTempDiv.appendChild(minTempImg);
+        minTempDiv.appendChild(minTempText);
+
+        cardContent.appendChild(minTempDiv);
+        cardContent.appendChild(maxTempDiv);
+
+        // Append header and content to card
+        weatherCard.appendChild(cardHeader);
+        weatherCard.appendChild(cardContent);
+
+        return weatherCard;
+      }
+    </script>
+  </body>
+</html>
